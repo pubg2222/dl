@@ -1,0 +1,38 @@
+import tensorflow as tf
+from keras.datasets import mnist
+from keras.models import Sequential
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+
+(x_train, y_train),(x_test, y_text) = mnist.load_data()
+
+x_train = x_train/255
+y_train = y_train/255
+
+import keras
+model = Sequential()
+model.add(keras.layers.Flatten(input_shape = (28, 28)))
+model.add(keras.layers.Dense(128, activation='relu'))
+model.add(keras.layers.Dense(10, activation='softmax'))
+
+model.compile(optimizer='sgd', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs = 5)
+
+n = random.randint(0, 999)
+plt.imshow(x_test[n])
+plt.show()
+prediction = model.predict(x_test)
+print("the handwritten number in image is %d " %np.argmax(prediction[n]))
+
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['loss'])
+plt.title('Accuracy and Loss')
+plt.xlabel('epochs')
+plt.ylabel('Accuracy/Loss')
+plt.legend(['accuracy', 'loss'], loc='upper right')
+plt.show()
+
+import pandas as pd
+pd.DataFrame(history.history).plot(figsize=(8, 5))
+plt.show()
