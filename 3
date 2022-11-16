@@ -1,0 +1,61 @@
+from keras.models import Sequential
+from keras. layers import Conv2D, MaxPooling2D, Dense, Flatten
+import numpy as np
+
+# load dataset
+x_train = np.loadtext("", delimiter=',')
+y_train = np.loadtext("", delimiter=',')
+x_test = np.loadtext("", delimiter=',')
+y_test = np.loadtext("", delimiter=',')
+
+print("shape of x_train: ", x_train.shape)
+print("shape of y_train: ", y_train.shape)
+print("shape of x_test: ", x_test.shape)
+print("shape of y_test: ", y_test.shape)
+
+x_train = x_train.reshape(len(x_train), 100, 100, 3)
+y_train = y_train.reshape(len(y_train), 1)
+x_test = x_test.reshape(len(x_test), 100, 100, 3)
+y_test = y_test.reshape(len(y_test), 1)
+x_train = x_train/255
+x_test = x_test/255
+
+print("shape of x_train: ", x_train.shape)
+print("shape of y_train: ", y_train.shape)
+print("shape of x_test: ", x_test.shape)
+print("shape of y_test: ", y_test.shape)
+x_train[1,:]
+
+# displaying random image from dataset
+import matplotlib.pyplot as plt
+import random
+int = random.randint(0, len(x_train))
+plt.imshow(x_train[int,:])
+plt.show()
+
+#Building a model
+model = Sequential([
+    Conv2D(32, (3,3), activation='relu', input_shape=(100,3,3)),
+    MaxPooling2D((2,2)),
+    Conv2D(32, (3,3), activation='relu'),
+    MaxPooling2D((2,2)),
+    Flatten(),
+    Dense(64, activation='relu'),
+    Dense(64, activation='sigmoid')
+])
+
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.fit(x_train, y.train, epochs=10, batch_size=64)
+
+# Model Evaluating
+model.evaluate(x_test, y_test)
+
+# making predictions
+int = random.randint(0, len(x_test))
+plt.imshow(x_test[int,:])
+plt.show()
+y_pred = model.predict(x_test[int,:].reshape(1, 100, 100, 3))
+y_pred = y_pred > 0.5
+if(y_pred == 0): pred = 'dog'
+else: pred = 'cat'
+print("It is a ", pred)
