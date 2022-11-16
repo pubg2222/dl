@@ -1,0 +1,60 @@
+#import required libraries
+import numpy as np
+from nltk.tokenize import sent_tokenize, word_tokenize
+import warnings
+warnings.filterwarnings(action='ignore')
+import gensim
+from gensim.models import Word2Vec
+import re
+import bs4 as bs
+import urllib.request
+import nltk
+
+nltk.download('punkt')
+nltk.download('stopwords')
+
+sentences = """   """
+
+# remove one letter words
+sentences = re.sub('[^A-Za-z0-9]+', ' ', sentences)
+# remove special characters
+sentences = re.sub(r'()?:,./\|!@#$%^&*', ' ', sentences)
+print(sentences)
+
+#convert all letters to lower case
+sentences = sentences.lower()
+#tokenize sentences
+all_sent = nltk.sent_tokenize(sentences)
+#break sentences into words
+all_words = [nltk.word_tokenize(sent) for sent in all_sent]
+
+# remove stopwords
+from nltk.corpus import stopwords
+for i in range(len(all_words)):
+  all_words[i]=[w for w in all_words[i] if w not in stopwords.words('english')]
+data = all_words
+
+#train using gensim
+model = gensim.models.Word2Vec(data, min_count=1, window=6)
+
+#finding similar words to given word
+word = "durga"
+v1 = model.wv[word]
+similar_word = model.wv.most_similar(word)
+for x in similar_word:
+  print(x)
+
+data1 = data[0]
+print(data1)
+
+#preparing list of context words
+data = []
+for i in range(2, len(data1)-2):
+  context = [data1[i-2], data1[i-1], data1[i+1], data1[i+2]]
+  target = data1[i]
+  data.append((context, target))
+print(data)
+
+i = 3
+print(data[i][0], data[i][1])
+print(model.predict_output_word(data[i][0]))
